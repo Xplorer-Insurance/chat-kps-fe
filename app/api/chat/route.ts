@@ -27,15 +27,16 @@ export async function POST(req: NextRequest) {
     // ID de hilo/sesión
     const userId = req.headers.get("x-session-id") ?? `web-${crypto.randomUUID()}`;
 
-    const localApiUrl = process.env.LOCAL_CHAT_API_URL ?? "http://localhost:8000/chat";
+    const localApiUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:8000/chat";
 
     console.log("[/api/chat] CALL -> FastAPI", {
       userId,
       localApiUrl,
       questionPreview: question.slice(0, 80),
     });
-
-    const response = await fetch(localApiUrl, {
+    console.log('localApiUrl ==============', localApiUrl);
+    console.log('JSON.stringify({ user_id: userId, question }) ==============', JSON.stringify({ user_id: userId, question }));
+    const response = await fetch(`${localApiUrl}/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId, question }),
@@ -125,6 +126,6 @@ export async function GET() {
     endpoint: "/api/chat",
     method: "POST",
     streaming: true,
-    localApi: process.env.LOCAL_CHAT_API_URL ?? "http://localhost:8000/chat",
+    localApi: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:8000/chat",
   });
 }
